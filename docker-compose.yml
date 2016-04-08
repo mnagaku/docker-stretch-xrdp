@@ -1,8 +1,4 @@
 xrdp:
     image: tukiyo3/xrdp-anthy
     ports:
-#      - "2222:22"
-#      - "5901:5901"
       - "3389:3389"
-#   command: sh -c "/etc/init.d/ssh start; vncserver :1; tail -f /dev/null"
-    command: sh -c "/etc/init.d/xrdp start; tail -f /dev/null"

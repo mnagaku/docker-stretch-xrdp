@@ -3,14 +3,24 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ## set timezone
 RUN ln -s -f /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
-    && dpkg-reconfigure tzdata \
-    && apt-get update -qq
+    && dpkg-reconfigure tzdata
 
 ## add packages
-RUN apt-get install -y \
-      lxde-core xrdp locales wget vim-gtk fonts-takao \
-      ibus-anthy tightvncserver ssh xfce4-terminal \
-    && apt-get clean
+RUN echo 'apt-get update -qq && apt-get install -yq $@ && apt-get clean && rm -rf /var/lib/apt/lists/*' > /usr/local/bin/apt.sh &&\
+    chmod +x /usr/local/bin/apt.sh
+RUN apt.sh \
+      fizsh \
+      fonts-takao \
+      ibus-anthy \
+      locales \
+      lxde-core \
+      lxterminal \
+      ssh \
+      sudo \
+      tightvncserver \
+      vim-gtk \
+      wget \
+      xrdp
 ## ja_JP.UTF-8
 RUN sed -i -e 's/# ja_JP.UTF-8/ja_JP.UTF-8/' /etc/locale.gen \
     && locale-gen \
@@ -35,18 +45,32 @@ RUN ln -s km-0411.ini km-e0010411.ini \
     && sed -i -e "8i export GTK_IM_MODULE=ibus" startwm.sh \
     && sed -i -e "8i export XMODIFIERS='@im=ibus'" startwm.sh \
     && sed -i -e "8i export QT_IM_MODULE=ibus" startwm.sh
-RUN echo "root:root" | chpasswd
 
-WORKDIR /root
-RUN mkdir .vnc \
-    && echo "root" | vncpasswd -f > .vnc/passwd \
-    && chmod 600 .vnc/passwd
-#COPY files/vnc/passwd .vnc/
+## create vagrant account.uid:gid=1000:1000
+ENV HOME /home/${USER}
+RUN export uid=1000 gid=1000 \
+    && echo "${USER}:x:${uid}:${gid}:Developer,,,:${HOME}:/bin/bash" >> /etc/passwd \
+    && echo "${USER}:x:${uid}:" >> /etc/group \
+    && echo "${USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
+    && install -d -m 0755 -o ${uid} -g ${gid} ${HOME} \
+    && echo "${USER}:${USER}" | chpasswd
+WORKDIR ${HOME}
+
+## vnc server settings.
+RUN install -d -m 0755 -o ${uid} -g ${gid} \
+      Downloads \
+      Documents \
+      Desktop \
+      .vnc \
+      .thunderbird \
+      .ssh \
+      .fizsh
+
 COPY files/vnc/xstartup .vnc/
-RUN chown -R root:root .vnc/
-
-## vncserver起動のためUSERを設定
-ENV USER=root
+RUN \
+    echo "${USER}" | vncpasswd -f > .vnc/passwd \
+    && chmod 600 .vnc/passwd \
+    && chown -R "${USER}:${USER}" .vnc/
 
 ## x2goserver
 # RUN apt-key adv --recv-keys --keyserver keys.gnupg.net E1F958385BFE2B6E \
@@ -54,7 +78,8 @@ ENV USER=root
 #     && apt-get update -qq \
 #     && apt-get install -y x2goserver x2goserver-xsession
 
-## ssh root account.
-# RUN mkdir /root/.ssh \
-#     && sed -i -e "s/^PermitRootLogin prohibit-password/PermitRootLogin yes/" /etc/ssh/sshd_config
-#COPY files/authorized_keys /root/.ssh/authorized_keys
+VOLUME ${HOME}
+ENV USER vagrant
+EXPOSE 3389
+
+CMD sh -c "/etc/init.d/xrdp start; tail -f /dev/null"
