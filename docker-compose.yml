@@ -1,0 +1,5 @@
+d9:
+    image: tukiyo3/x2go
+    ports:
+      - "2222:22"
+    command: sh -c "/etc/init.d/ssh start; /etc/init.d/x2goserver start; tail -f /dev/null"
