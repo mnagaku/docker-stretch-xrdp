@@ -22,7 +22,7 @@ RUN apt.sh \
       wget \
       xrdp
 ## ja_JP.UTF-8
-RUN sed -i -e "s/filename_encoding=UTF-8/filename_encoding='en_US'/" /etc/xdg/user-dirs.conf \
+RUN sed -i -e "s/^enabled=True/enabled=False/" /etc/xdg/user-dirs.conf \
     && sed -i -e "s/^# ja_JP.UTF-8/ja_JP.UTF-8/" /etc/locale.gen \
     && locale-gen \
     && update-locale LANG="ja_JP.UTF-8"
@@ -41,7 +41,8 @@ RUN ln -s km-0411.ini km-e0010411.ini \
     && sed -i -e "8i export LANG=ja_JP.UTF-8" startwm.sh \
     && sed -i -e "8i export GTK_IM_MODULE=ibus" startwm.sh \
     && sed -i -e "8i export XMODIFIERS='@im=ibus'" startwm.sh \
-    && sed -i -e "8i export QT_IM_MODULE=ibus" startwm.sh
+    && sed -i -e "8i export QT_IM_MODULE=ibus" startwm.sh \
+    && sed -i -e "8i mkdir Documents Downloads Pictures work .ssh" startwm.sh
 
 ## create vagrant account.uid:gid=1000:1000
 ENV USER vagrant
@@ -50,11 +51,6 @@ RUN export uid=1000 gid=1000 \
     && echo "${USER}:x:${uid}:${gid}:Developer,,,:${HOME}:/usr/bin/fizsh" >> /etc/passwd \
     && echo "${USER}:x:${uid}:" >> /etc/group \
     && echo "${USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
-    && install -d -m 0755 -o ${uid} -g ${gid} \
-         ${HOME} \
-         ${HOME}/Downloads \
-         ${HOME}/Pictures \
-         ${HOME}/work \
     && echo "${USER}:${USER}" | chpasswd
 WORKDIR ${HOME}
 
@@ -62,6 +58,8 @@ WORKDIR ${HOME}
 COPY files/vnc/xstartup .vnc/
 RUN echo "${USER}" | vncpasswd -f > .vnc/passwd \
     && chmod 600 .vnc/passwd
+
+RUN chown -R "${USER}:${USER}" ${HOME}
 
 ## x2goserver
 # RUN apt-key adv --recv-keys --keyserver keys.gnupg.net E1F958385BFE2B6E \
