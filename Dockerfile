@@ -54,15 +54,13 @@ RUN export uid=1000 gid=1000 \
     && echo "${USER}:x:${uid}:" >> /etc/group \
     && echo "${USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
     && install -d -m 0755 -o ${uid} -g ${gid} ${HOME} \
-    && echo "${USER}:${USER}" | chpasswd
+    && echo "${USER}:${USER}" | chpasswd \
+    && LANG=C xdg-user-dirs-update --force
 WORKDIR ${HOME}
 
 ## vnc server settings.
 RUN export uid=1000 gid=1000 \
     && install -d -m 0755 -o ${uid} -g ${gid} \
-         Downloads \
-         Documents \
-         Desktop \
          .vnc \
          .thunderbird \
          .ssh \
