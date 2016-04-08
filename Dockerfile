@@ -22,10 +22,10 @@ RUN apt.sh \
       wget \
       xrdp
 ## ja_JP.UTF-8
-RUN sed -i -e 's/# ja_JP.UTF-8/ja_JP.UTF-8/' /etc/locale.gen \
+RUN sed -i -e "s/filename_encoding=UTF-8/filename_encoding='en_US'/" /etc/xdg/user-dirs.conf \
+    && sed -i -e 's/# ja_JP.UTF-8/ja_JP.UTF-8/' /etc/locale.gen \
     && locale-gen \
-    && update-locale LANG="ja_JP.UTF-8" \
-    && LANG=C xdg-user-dirs-update --force
+    && update-locale LANG="ja_JP.UTF-8"
 
 ## ibus
 ENV LANG "ja_JP.UTF-8"
@@ -50,7 +50,7 @@ RUN ln -s km-0411.ini km-e0010411.ini \
 ENV USER vagrant
 ENV HOME /home/${USER}
 RUN export uid=1000 gid=1000 \
-    && echo "${USER}:x:${uid}:${gid}:Developer,,,:${HOME}:/bin/bash" >> /etc/passwd \
+    && echo "${USER}:x:${uid}:${gid}:Developer,,,:${HOME}:/usr/bin/fizsh" >> /etc/passwd \
     && echo "${USER}:x:${uid}:" >> /etc/group \
     && echo "${USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
     && install -d -m 0755 -o ${uid} -g ${gid} ${HOME} \
@@ -60,14 +60,8 @@ WORKDIR ${HOME}
 RUN export uid=1000 gid=1000 \
     && install -d -m 0755 -o ${uid} -g ${gid} \
          .vnc \
-         .thunderbird \
          .ssh \
-         .config \
          .fizsh
-
-## dirname LANG C
-COPY files/dirname/user-dirs.dirs .config/
-COPY files/dirname/user-dirs.locale .config/
 
 ## vnc server settings.
 COPY files/vnc/xstartup .vnc/
