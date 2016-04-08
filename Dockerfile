@@ -31,10 +31,10 @@ RUN ln -s km-0411.ini km-e0010411.ini \
     && ln -s km-0411.ini km-e0200411.ini \
     && ln -s km-0411.ini km-e0210411.ini \
     && sed -i -e "8i /usr/bin/ibus-daemon -d" startwm.sh \
-    && sed -i -e "8i LANG=ja_JP.UTF-8" startwm.sh \
-    && sed -i -e "8i GTK_IM_MODULE=ibus" startwm.sh \
-    && sed -i -e "8i XMODIFIERS='@im=ibus'" startwm.sh \
-    && sed -i -e "8i QT_IM_MODULE=ibus" startwm.sh
+    && sed -i -e "8i export LANG=ja_JP.UTF-8" startwm.sh \
+    && sed -i -e "8i export GTK_IM_MODULE=ibus" startwm.sh \
+    && sed -i -e "8i export XMODIFIERS='@im=ibus'" startwm.sh \
+    && sed -i -e "8i export QT_IM_MODULE=ibus" startwm.sh
 RUN echo "root:root" | chpasswd
 
 WORKDIR /root
