@@ -1,1 +1,1 @@
-docker build -t tukiyo3/xrdp .
+docker build -t tukiyo3/xrdp-anthy .

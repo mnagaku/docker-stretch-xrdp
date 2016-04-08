@@ -1,5 +1,5 @@
 xrdp:
-    image: tukiyo3/xrdp
+    image: tukiyo3/xrdp-anthy
     ports:
 #      - "2222:22"
 #      - "5901:5901"
