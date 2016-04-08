@@ -9,7 +9,7 @@ RUN ln -s -f /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
 # add packages
 RUN apt-get install -y \
       lxde-core xrdp locales wget vim-gtk fonts-takao \
-      ibus-anthy tightvncserver ssh xfce4-terminal
+      ibus-anthy tightvncserver ssh xfce4-terminal \
     && apt-get clean
 # ja_JP.UTF-8
 RUN sed -i -e 's/# ja_JP.UTF-8/ja_JP.UTF-8/' /etc/locale.gen \
