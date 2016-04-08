@@ -58,14 +58,15 @@ RUN export uid=1000 gid=1000 \
 WORKDIR ${HOME}
 
 ## vnc server settings.
-RUN install -d -m 0755 -o ${uid} -g ${gid} \
-      Downloads \
-      Documents \
-      Desktop \
-      .vnc \
-      .thunderbird \
-      .ssh \
-      .fizsh
+RUN export uid=1000 gid=1000 \
+    && install -d -m 0755 -o ${uid} -g ${gid} \
+         Downloads \
+         Documents \
+         Desktop \
+         .vnc \
+         .thunderbird \
+         .ssh \
+         .fizsh
 
 COPY files/vnc/xstartup .vnc/
 RUN \
