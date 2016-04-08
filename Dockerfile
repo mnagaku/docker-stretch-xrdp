@@ -23,15 +23,12 @@ RUN apt.sh \
       xrdp
 ## ja_JP.UTF-8
 RUN sed -i -e "s/filename_encoding=UTF-8/filename_encoding='en_US'/" /etc/xdg/user-dirs.conf \
-    && sed -i -e 's/# ja_JP.UTF-8/ja_JP.UTF-8/' /etc/locale.gen \
+    && sed -i -e "s/^# ja_JP.UTF-8/ja_JP.UTF-8/" /etc/locale.gen \
     && locale-gen \
     && update-locale LANG="ja_JP.UTF-8"
 
 ## ibus
 ENV LANG "ja_JP.UTF-8"
-ENV XMODIFIERS "'@im=ibus'"
-ENV GTK_IM_MODULE "ibus"
-ENV QT_IM_MODULE "ibus"
 
 ## xrdp jp106 keyboard support.
 WORKDIR /etc/xrdp
@@ -56,12 +53,6 @@ RUN export uid=1000 gid=1000 \
     && install -d -m 0755 -o ${uid} -g ${gid} ${HOME} \
     && echo "${USER}:${USER}" | chpasswd
 WORKDIR ${HOME}
-
-RUN export uid=1000 gid=1000 \
-    && install -d -m 0755 -o ${uid} -g ${gid} \
-         .vnc \
-         .ssh \
-         .fizsh
 
 ## vnc server settings.
 COPY files/vnc/xstartup .vnc/
