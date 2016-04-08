@@ -50,7 +50,11 @@ RUN export uid=1000 gid=1000 \
     && echo "${USER}:x:${uid}:${gid}:Developer,,,:${HOME}:/usr/bin/fizsh" >> /etc/passwd \
     && echo "${USER}:x:${uid}:" >> /etc/group \
     && echo "${USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
-    && install -d -m 0755 -o ${uid} -g ${gid} ${HOME} \
+    && install -d -m 0755 -o ${uid} -g ${gid} \
+         ${HOME} \
+         ${HOME}/Downloads \
+         ${HOME}/Pictures \
+         ${HOME}/work \
     && echo "${USER}:${USER}" | chpasswd
 WORKDIR ${HOME}
 
