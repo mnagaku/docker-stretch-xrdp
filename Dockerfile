@@ -54,21 +54,24 @@ RUN export uid=1000 gid=1000 \
     && echo "${USER}:x:${uid}:" >> /etc/group \
     && echo "${USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
     && install -d -m 0755 -o ${uid} -g ${gid} ${HOME} \
-    && echo "${USER}:${USER}" | chpasswd \
-    && LANG=C xdg-user-dirs-update --force
+    && echo "${USER}:${USER}" | chpasswd
 WORKDIR ${HOME}
 
-## vnc server settings.
 RUN export uid=1000 gid=1000 \
     && install -d -m 0755 -o ${uid} -g ${gid} \
          .vnc \
          .thunderbird \
          .ssh \
+         .config \
          .fizsh
 
+## dirname LANG C
+COPY files/dirname/user-dirs.dirs .config/
+COPY files/dirname/user-dirs.locale .config/
+
+## vnc server settings.
 COPY files/vnc/xstartup .vnc/
-RUN \
-    echo "${USER}" | vncpasswd -f > .vnc/passwd \
+RUN echo "${USER}" | vncpasswd -f > .vnc/passwd \
     && chmod 600 .vnc/passwd
 
 ## x2goserver
