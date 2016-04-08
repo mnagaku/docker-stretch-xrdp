@@ -1,5 +1,8 @@
-d9:
-    image: tukiyo3/x2go
+xrdp:
+    image: tukiyo3/xrdp
     ports:
-      - "2222:22"
-    command: sh -c "/etc/init.d/ssh start; /etc/init.d/x2goserver start; tail -f /dev/null"
+#      - "2222:22"
+#      - "5901:5901"
+      - "3389:3389"
+#   command: sh -c "/etc/init.d/ssh start; vncserver :1; tail -f /dev/null"
+    command: sh -c "/etc/init.d/xrdp start; tail -f /dev/null"

@@ -1,1 +1,1 @@
-docker build -t tukiyo3/x2go .
+docker build -t tukiyo3/xrdp .

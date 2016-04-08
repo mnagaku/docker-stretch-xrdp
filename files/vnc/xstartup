@@ -1,0 +1,14 @@
+#!/bin/sh
+
+xrdb $HOME/.Xresources
+xsetroot -solid grey
+# Fix to make GNOME work
+export XKL_XMODMAP_DISABLE=1
+
+export GTK_IM_MODULE=ibus
+export XMODIFIERS=@im=ibus
+export QT_IM_MODULE=ibus
+ibus-daemon -d &
+lxpanel &
+openbox &
+xfce4-terminal &
