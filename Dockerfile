@@ -18,7 +18,7 @@ RUN apt.sh \
       ssh \
       sudo \
       tightvncserver \
-      vim-gtk \
+      vim \
       wget \
       xrdp
 ## ja_JP.UTF-8
