@@ -1,4 +1,7 @@
 FROM debian:stretch
+
+ENV PASSWORD hogehoge
+
 ENV DEBIAN_FRONTEND noninteractive
 
 ## set timezone
@@ -20,7 +23,8 @@ RUN apt.sh \
       tightvncserver \
       vim \
       wget \
-      xrdp
+      xrdp \
+      iceweasel
 ## ja_JP.UTF-8
 RUN sed -i -e "s/^enabled=True/enabled=False/" /etc/xdg/user-dirs.conf \
     && sed -i -e "s/^# ja_JP.UTF-8/ja_JP.UTF-8/" /etc/locale.gen \
@@ -44,19 +48,19 @@ RUN ln -s km-0411.ini km-e0010411.ini \
     && sed -i -e "8i export QT_IM_MODULE=ibus" startwm.sh \
     && sed -i -e "8i mkdir Documents Downloads Pictures work .ssh" startwm.sh
 
-## create vagrant account.uid:gid=1000:1000
-ENV USER vagrant
+## create xrdpuser account.uid:gid=1000:1000
+ENV USER xrdpuser
 ENV HOME /home/${USER}
 RUN export uid=1000 gid=1000 \
     && echo "${USER}:x:${uid}:${gid}:Developer,,,:${HOME}:/usr/bin/fizsh" >> /etc/passwd \
     && echo "${USER}:x:${uid}:" >> /etc/group \
     && echo "${USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
-    && echo "${USER}:${USER}" | chpasswd
+    && echo "${USER}:${PASSWORD}" | chpasswd
 WORKDIR ${HOME}
 
 ## vnc server settings.
 COPY files/vnc/xstartup .vnc/
-RUN echo "${USER}" | vncpasswd -f > .vnc/passwd \
+RUN echo "${PASSWORD}" | vncpasswd -f > .vnc/passwd \
     && chmod 600 .vnc/passwd
 
 RUN chown -R "${USER}:${USER}" ${HOME}
@@ -67,6 +71,6 @@ RUN chown -R "${USER}:${USER}" ${HOME}
 #     && apt-get update -qq \
 #     && apt-get install -y x2goserver x2goserver-xsession
 
-VOLUME ${HOME}
+#VOLUME ${HOME}
 EXPOSE 3389
-CMD /etc/init.d/xrdp start; tail -f /dev/null
+CMD rm -f /var/run/xrdp/*; /etc/init.d/xrdp start; tail -f /dev/null
