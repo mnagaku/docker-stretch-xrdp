@@ -1,4 +1,0 @@
-xrdp:
-    image: tukiyo3/xrdp-anthy
-    ports:
-      - "3389:3389"

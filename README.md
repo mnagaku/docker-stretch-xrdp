@@ -1,7 +1,15 @@
 ```
-docker-compose up -d
-rdesktop -u vagrant localhost:3389 -g 1024x768
+build.sh
 ```
 
-* user:pass = vagrant:vagrant
+で、コンテナイメージmnagaku/xrdpを作成し、
 
+```
+docker run -d -p 3389:3389 mnagaku/xrdp
+```
+
+で、実行し、RDPクライアントで、
+
+* user:pass = xrdpuser:hogehoge
+
+で接続する。

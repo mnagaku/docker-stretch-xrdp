@@ -1,1 +1,1 @@
-docker build -t tukiyo3/xrdp-anthy .
+docker build -t mnagaku/xrdp .
